@@ -4,10 +4,10 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.Queue;
 
-public class AdditionalStreams extends Thread {
+public class AdditionalStreams{
 
-    private volatile Queue<String> queueList;
-    volatile String pathFile;
+    static private volatile Queue<String> queueList;
+    static volatile String pathFile;
     volatile int countThread;
 
     private synchronized void reduceAndIncreaseCountThread(int arg) {
@@ -23,11 +23,15 @@ public class AdditionalStreams extends Thread {
         countThread = c;
     }
 
-    private synchronized String getFileName() {
+    public static synchronized String getPathFile (){
+        return pathFile;
+    }
+
+    public static synchronized String getFileName() {
         return queueList.poll();
     }
 
-    public int getSizeQueueList() {
+    public static int getSizeQueueList() {
         return queueList.size();
     }
 
@@ -47,52 +51,6 @@ public class AdditionalStreams extends Thread {
                 System.out.println(s1);
 
             System.out.println();
-        }
-    }
-
-    public void fourNewThread() throws InterruptedException {
-        int l = getSizeQueueList();
-
-        Runnable task = new Runnable() {
-            @Override
-            public void run() {
-                reduceAndIncreaseCountThread(1);
-
-                String fullFileName = getFileName();
-                if (fullFileName != null) {
-                    String fullPathFile = pathFile + "/" + fullFileName;
-                    File file = new File(fullPathFile);
-                    if (file.isDirectory()) {
-                        System.out.println("this is a directory: " + file.getName());
-                    } else {
-                        String exp = "";
-
-                        boolean trig = false;
-                        for (int j = 0; j < fullFileName.length(); j++) {
-                            if (fullFileName.charAt(j) == '.')
-                                trig = true;
-
-                            if (trig) {
-                                exp += fullFileName.charAt(j);
-                            }
-                        }
-                        System.out.println(fullFileName + " " + "form: " + exp + " size: " + file.length());
-                    }
-                }
-                reduceAndIncreaseCountThread(-1);
-            }
-        };
-
-        for (int i = 0; i < l; i++) {
-            if (countThread <= 4) {
-                Thread thread = new Thread(task);
-                thread.start();
-                System.out.println(thread.getName());
-                sleep(25l);
-            } else {
-                sleep(750l);
-                i--;
-            }
         }
     }
 }

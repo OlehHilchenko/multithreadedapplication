@@ -6,28 +6,20 @@ import java.util.Queue;
 
 public class AdditionalStreams{
 
-    static private volatile Queue<String> queueList;
-    static volatile String pathFile;
-    volatile int countThread;
+    static private  Queue<String> queueList;
+    static String pathFile;
 
-    private synchronized void reduceAndIncreaseCountThread(int arg) {
-        if (arg < 0)
-            countThread = countThread + 1;
-        else if (arg > 0)
-            countThread = countThread - 1;
-    }
 
-    AdditionalStreams(LinkedList<String> q, String p, int c) {
+    AdditionalStreams(LinkedList<String> q, String p) {
         queueList = q;
         pathFile = p;
-        countThread = c;
     }
 
-    public static synchronized String getPathFile (){
+    public static String getPathFile (){
         return pathFile;
     }
 
-    public static synchronized String getFileName() {
+    public static String getFileName() {
         return queueList.poll();
     }
 
